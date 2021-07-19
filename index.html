@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>game15</title>
+    <style media="screen">
+        h1 {
+            text-align: left;
+            color: grey;
+            font-size: 35px;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 40%;
+        }
+        td {
+            color: grey;
+            background-color: lavender;
+            width: 120px;
+            height: 120px;
+            text-align: center;
+            font-size: 50px;
+            font-family: Arial, Helvetica, sans-serif;
+            empty-cells: hide;
+        }
+        button {
+            color: grey;
+            font-size: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 5px 20px;
+            margin-top: 15px;
+            transition: all .3s ease-in-out;
+        }
+        button:hover {
+            color: rgb(71, 68, 68);
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="hbest">best: </h1>
+    <h1 id="hcurrent">current: </h1>
+    <table id="field" border="2"></table>
+    <button onclick="update();">restart</button>
+    <script type="text/javascript">
+        let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+        let table = document.getElementById("field");
+        let hbest = document.getElementById("hbest");
+        let hcurrent = document.getElementById("hcurrent");
+        let best;
+        let current;
+
+        function shuffle() {
+            arr.sort(() => Math.random() - 0.5);
+        }
+
+        function checking() {
+            let sum = arr.indexOf(16);
+            for (let i = 0; i < arr.length; i++) 
+                for (let j = i + 1; j < arr.length; j++) 
+                    if (arr[i] > arr[j] && arr[i] != 16 && arr[j] != 16) 
+                        sum++;
+            if (sum % 2 == 0) {return true;}
+            return false;
+        }
+
+        function build() {
+            for (let i = 0; i < 4; i++) {
+                let tr = document.createElement('tr');
+                for (let j = 0; j < 4; j++) {
+                    let td = document.createElement('td');
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+        }
+
+        function winning() {
+            for (let i = 0; i < 16; i++)
+                if (i+1 != arr[i])
+                    return;
+            if (current && (current < best || !best)) {
+                best = current;
+                hbest.innerHTML = "best: " + best;
+            }
+            window.alert("Congratulations!");
+            update();
+        }
+
+        function fullfill() {
+            for (let i = 0; i < 4; i++)
+                for (let j = 0; j < 4; j++) {
+                    t = arr[i*4+j];
+                    if (t != 16) 
+                        table.rows[i].cells[j].innerHTML = t;
+                    else table.rows[i].cells[j].innerHTML = "";
+                    table.rows[i].cells[j].onclick = function() {
+                        let idxNumber = i*4+j;
+                        let idx = arr.indexOf(16);
+                        if (idxNumber == idx - 4 || idxNumber == idx + 4 || idxNumber == idx - 1 || idxNumber == idx + 1) {
+                            arr[idx] = [arr[idxNumber], arr[idxNumber] = arr[idx]][0];
+                            current++;
+                            hcurrent.innerHTML = "current: " + current;
+                            fullfill();
+                            winning();
+                        }
+                    };
+                }
+        }
+
+        function update() {
+            hcurrent.innerHTML = "current: ";
+            current = 0;
+            shuffle();
+            while(!checking())
+                shuffle();
+            fullfill();
+        }
+
+        build();
+        update();
+
+    </script>
+</body>
+</html>
