@@ -59,8 +59,7 @@
                 for (let j = i + 1; j < arr.length; j++) 
                     if (arr[i] > arr[j] && arr[i] != 16 && arr[j] != 16) 
                         sum++;
-            if (sum % 2 == 0) {return true;}
-            return false;
+            return !(sum % 2);
         }
 
         function build() {
@@ -74,7 +73,7 @@
             }
         }
 
-        function winning() {
+        function isWon() {
             for (let i = 0; i < 16; i++)
                 if (i+1 != arr[i])
                     return;
@@ -83,16 +82,14 @@
                 hbest.innerHTML = "best: " + best;
             }
             window.alert("Congratulations!");
-            update();
+            restart();
         }
 
         function fullfill() {
             for (let i = 0; i < 4; i++)
                 for (let j = 0; j < 4; j++) {
                     t = arr[i*4+j];
-                    if (t != 16) 
-                        table.rows[i].cells[j].innerHTML = t;
-                    else table.rows[i].cells[j].innerHTML = "";
+                    t != 16 ? table.rows[i].cells[j].innerHTML = t : table.rows[i].cells[j].innerHTML = "";
                     table.rows[i].cells[j].onclick = function() {
                         let idxNumber = i*4+j;
                         let idx = arr.indexOf(16);
@@ -101,23 +98,24 @@
                             current++;
                             hcurrent.innerHTML = "current: " + current;
                             fullfill();
-                            winning();
+                            isWon();
                         }
                     };
                 }
         }
 
-        function update() {
+        function restart() {
             hcurrent.innerHTML = "current: ";
             current = 0;
             shuffle();
             while(!checking())
                 shuffle();
+            // arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 14, 15];
             fullfill();
         }
 
         build();
-        update();
+        restart();
 
     </script>
 </body>
